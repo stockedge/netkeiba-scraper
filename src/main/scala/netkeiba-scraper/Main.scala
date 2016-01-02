@@ -599,10 +599,14 @@ class FeatureGenerator(
     
   val order_of_finish =
     sql"""
-select order_of_finish
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}""".
+select 
+  order_of_finish
+from
+  race_result
+where 
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}""".
   map(_.string("order_of_finish")).
   single.
   apply().
@@ -610,10 +614,14 @@ and horse_number = ${horse_number}""".
     
   val horse_id =
     sql"""
-select horse_id
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}""".
+select
+  horse_id
+from
+  race_result
+where
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}""".
   map(_.string("horse_id")).
   single.
   apply().
@@ -621,10 +629,14 @@ and horse_number = ${horse_number}""".
   
   val jockey_id =
     sql"""
-select jockey_id
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}""".
+select
+  jockey_id
+from
+  race_result
+where
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}""".
   map(_.string("jockey_id")).
   single.
   apply().
@@ -632,10 +644,14 @@ and horse_number = ${horse_number}""".
   
   val trainer_id = 
     sql"""
-select trainer_id
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}""".
+select 
+  trainer_id
+from
+  race_result
+where
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}""".
   map(_.string("trainer_id")).
   single.
   apply().
@@ -643,10 +659,14 @@ and horse_number = ${horse_number}""".
   
   val owner_id = 
     sql"""
-select owner_id
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}""".
+select
+  owner_id
+from
+  race_result
+where
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}""".
   map(_.string("owner_id")).
   single.
   apply().
@@ -655,11 +675,20 @@ and horse_number = ${horse_number}""".
   //Speed rating for the previous race in which the horse ran
   val preSRa = {
     sql"""
-select speed_figure
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
-and speed_figure is not null
+select 
+  speed_figure
+from 
+  race_result 
+inner join
+  race_info 
+on
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
+and 
+  speed_figure is not null
 order by date desc
 limit 1
 """.map(_.int("speed_figure")).
@@ -671,11 +700,20 @@ limit 1
   val avgsr4 = {
     val srs =
     sql"""
-select speed_figure
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
-and speed_figure is not null
+select 
+  speed_figure
+from 
+  race_result
+inner join
+  race_info
+on
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
+and
+  speed_figure is not null
 order by date desc
 limit 4
 """.map(_.double("speed_figure")).
@@ -691,11 +729,20 @@ limit 4
   val avgWin4 = {
     val wins =
     sql"""
-select (order_of_finish = '1' or order_of_finish = '2' or order_of_finish = '3') as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
-and speed_figure is not null
+select
+  (order_of_finish = '1' or order_of_finish = '2' or order_of_finish = '3') as is_win
+from
+  race_result
+inner join
+  race_info
+on
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
+and
+  speed_figure is not null
 order by date desc
 limit 4
 """.map(_.double("is_win")).
@@ -712,12 +759,22 @@ limit 4
   val disavesr = {
     val srs =
       sql"""
-select speed_figure
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
-and distance = ${distance}
-and speed_figure is not null
+select 
+  speed_figure
+from 
+  race_result 
+inner join
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
+and 
+  distance = ${distance}
+and 
+  speed_figure is not null
 order by date desc
 limit 100
 """.map(_.double("speed_figure")).
@@ -733,10 +790,17 @@ limit 100
   val disRoc = {
     val distances =
       sql"""
-select distance
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select
+  distance
+from 
+  race_result 
+inner join
+  race_info 
+on race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.double("distance")).
@@ -755,10 +819,18 @@ limit 100
   val eps = {
     val earning_money =
     sql"""
-select earning_money
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  earning_money
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.doubleOpt("earning_money")).
@@ -774,10 +846,14 @@ limit 100
   //Weight carried by the horse in current race
   val weight = {
     sql"""
-select basis_weight
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select
+  basis_weight
+from 
+  race_result
+where
+  race_id = ${race_id}
+and 
+  horse_number = ${horse_number}
 """.map(_.double("basis_weight")).
     single.
     apply.
@@ -787,10 +863,14 @@ and horse_number = ${horse_number}
   val hweight = {
     Try{
       sql"""
-select horse_weight
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select 
+  horse_weight
+from 
+  race_result
+where 
+  race_id = ${race_id}
+and 
+  horse_number = ${horse_number}
 """.map(_.string("horse_weight")).
       single.
       apply.
@@ -803,10 +883,14 @@ and horse_number = ${horse_number}
   val dhweight = {
     Try{
       sql"""
-select horse_weight
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select
+  horse_weight
+from 
+  race_result
+where 
+  race_id = ${race_id}
+and
+  horse_number = ${horse_number}
 """.map(_.string("horse_weight")).
       single.
       apply.
@@ -820,10 +904,18 @@ and horse_number = ${horse_number}
   val winRun = {
     val wins =
       sql"""
-select (order_of_finish = '1') as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  (order_of_finish = '1') as is_win
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 limit 100
 """.map(_.int("is_win")).
     list.
@@ -839,10 +931,18 @@ limit 100
   val twinper = {
     val wins =
       sql"""
-select (order_of_finish = '1') as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where trainer_id = ${trainer_id}
-and race_info.date < ${date}
+select 
+  (order_of_finish = '1') as is_win
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  trainer_id = ${trainer_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.int("is_win")).
@@ -859,10 +959,18 @@ limit 100
   val owinper = {
     val wins =
       sql"""
-select (order_of_finish = '1') as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where owner_id = ${owner_id}
-and race_info.date < ${date}
+select 
+  (order_of_finish = '1') as is_win
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  owner_id = ${owner_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.int("is_win")).
@@ -878,10 +986,14 @@ limit 100
   //The winning percentage of the jockey in career to date of race
   val age = {
     sql"""
-select age
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select 
+  age
+from 
+  race_result
+where 
+  race_id = ${race_id}
+and 
+  horse_number = ${horse_number}
 """.map(_.double("age")).
     single.
     apply.
@@ -890,11 +1002,20 @@ and horse_number = ${horse_number}
  
   val dsl = {
     sql"""
-select (julianday(${date}) - julianday(date)) as dsl
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
-and speed_figure is not null
+select 
+  (julianday(${date}) - julianday(date)) as dsl
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
+and 
+  speed_figure is not null
 order by date desc
 limit 1
 """.map(_.double("dsl")).
@@ -912,10 +1033,14 @@ limit 1
   
   val sex = {
     val state = sql"""
-select sex
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select 
+  sex
+from
+  race_result
+where
+  race_id = ${race_id}
+and 
+  horse_number = ${horse_number}
 """.map(_.string("sex")).
     single.
     apply.
@@ -926,10 +1051,18 @@ and horse_number = ${horse_number}
   
   val enterTimes = {
     sql"""
-select count(*) as count
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select
+  count(*) as count
+from
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
 """.map(_.double("count")).
     single.
     apply.
@@ -938,10 +1071,14 @@ and race_info.date < ${date}
  
   val odds = {
     sql"""
-select odds
-from race_result
-where race_id = ${race_id}
-and horse_number = ${horse_number}
+select 
+  odds
+from 
+  race_result
+where 
+  race_id = ${race_id}
+and 
+  horse_number = ${horse_number}
 """.map(_.doubleOpt("odds")).
     single.
     apply.
@@ -952,10 +1089,18 @@ and horse_number = ${horse_number}
   val jEps = {
     val earning_money =
     sql"""
-select earning_money
-from race_result inner join race_info on race_result.race_id = race_info.id
-where jockey_id = ${jockey_id}
-and race_info.date < ${date}
+select 
+  earning_money
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  jockey_id = ${jockey_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.doubleOpt("earning_money")).
@@ -971,11 +1116,20 @@ limit 100
   val jAvgWin4 = {
     val wins =
     sql"""
-select (order_of_finish = '1' or order_of_finish = '2' or order_of_finish = '3') as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where jockey_id = ${jockey_id}
-and race_info.date < ${date}
-and speed_figure is not null
+select 
+  (order_of_finish = '1' or order_of_finish = '2' or order_of_finish = '3') as is_win
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  jockey_id = ${jockey_id}
+and 
+  race_info.date < ${date}
+and 
+  speed_figure is not null
 order by date desc
 limit 4
 """.map(_.double("is_win")).
@@ -998,10 +1152,18 @@ limit 4
   def jWinperOf(jockey_id: String)(implicit s: DBSession): Option[Double] = {
     val wins =
       sql"""
-select order_of_finish = '1' as is_win
-from race_result inner join race_info on race_result.race_id = race_info.id
-where jockey_id = ${jockey_id}
-and race_info.date < ${date}
+select 
+  order_of_finish = '1' as is_win
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  jockey_id = ${jockey_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.double("is_win")).
@@ -1014,10 +1176,18 @@ limit 100
 
   val toBeStrongJockey = {
     val preJockeyIdOpt = sql"""
-select jockey_id
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  jockey_id
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 1
 """.map(_.string("jockey_id")).
@@ -1033,10 +1203,18 @@ limit 1
   
   val preOOF =
     sql"""
-select order_of_finish
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  order_of_finish
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 1
 """.map(_.string("order_of_finish")).
@@ -1046,10 +1224,18 @@ limit 1
 
   val pre2OOF = {
     val orders = sql"""
-select order_of_finish
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  order_of_finish
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 2
 """.map(_.string("order_of_finish")).
@@ -1062,10 +1248,19 @@ limit 2
 
   val runningStyle = {
     val orders = sql"""
-select order_of_finish, pass
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  order_of_finish, 
+  pass
+from 
+  race_result
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 100
 """ .map(rs => (rs.string("order_of_finish"), rs.string("pass"))).
@@ -1084,10 +1279,18 @@ limit 100
   
   val preLateStart = {
     val preRemark = sql"""
-select remark
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  remark
+from 
+  race_result 
+inner join 
+  race_info 
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
 order by date desc
 limit 1
 """.map(_.stringOpt("remark")).
@@ -1100,10 +1303,18 @@ limit 1
 
   val lateStartPer = {
     val lateList = sql"""
-select (remark = '出遅れ') as is_late
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  (remark = '出遅れ') as is_late
+from 
+  race_result
+inner join
+  race_info
+on
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
 order by date desc
 limit 100
 """.map(_.intOpt("is_late").getOrElse(0)).
@@ -1115,10 +1326,18 @@ limit 100
 
   val preLastPhase = {
     sql"""
-select last_phase
-from race_result inner join race_info on race_result.race_id = race_info.id
-where horse_id = ${horse_id}
-and race_info.date < ${date}
+select 
+  last_phase
+from 
+  race_result 
+inner join 
+  race_info
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
 order by date desc
 limit 1
 """.map(_.doubleOpt("last_phase")).
@@ -1134,9 +1353,12 @@ limit 1
 
   val placeCode = {
     sql"""
-select place_detail
-from race_info
-where id = ${race_id}
+select 
+  place_detail
+from 
+  race_info
+where
+  id = ${race_id}
 """.map(_.string("place_detail")).
     single.
     apply.
