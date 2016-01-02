@@ -51,7 +51,8 @@ object RaceScraper {
       val file = new File(folder, num + ".html")
       if (!file.exists()) {
 	driver.get(url)
-	Thread.sleep(1000)
+	//â†“ã“ã“ã‚ã‚“ã¾ã‚ŠçŸ­ãã—ãªã„ã§ã­ï¼
+	Thread.sleep(5000)
 	val html = driver.getPageSource()
 	FileUtils.writeStringToFile(file, html)
       }
@@ -126,9 +127,9 @@ object RowExtractor {
  
     val usefulFiles =
       files.
-      //ƒ^ƒCƒ€w”‚ª•\¦‚³‚ê‚é2006”NˆÈ~‚Ìƒf[ƒ^‚¾‚¯g‚¤
+      //ã‚¿ã‚¤ãƒ æŒ‡æ•°ãŒè¡¨ç¤ºã•ã‚Œã‚‹2006å¹´ä»¥é™ã®ãƒ‡ãƒ¼ã‚¿ã ã‘ä½¿ã†
       filter(file => FilenameUtils.getBaseName(file.getName).take(4) >= "2006").
-      //ˆÈ‰º‚Ìƒf[ƒ^‚Í‰ó‚ê‚Ä‚¢‚é‚Ì‚ÅœŠO‚·‚éB‹°‚ç‚­netkeiba.com‚Ì•s‹ï‡B
+      //ä»¥ä¸‹ã®ãƒ‡ãƒ¼ã‚¿ã¯å£Šã‚Œã¦ã„ã‚‹ã®ã§é™¤å¤–ã™ã‚‹ã€‚æã‚‰ãnetkeiba.comã®ä¸å…·åˆã€‚
       filter(file => FilenameUtils.getBaseName(file.getName) != "200808020398").
       filter(file => FilenameUtils.getBaseName(file.getName) != "200808020399").
       toArray.
@@ -199,8 +200,8 @@ object RowExtractor {
       val conditions = {
         condition.
         split("/").
-        map(_.replace("“VŒó :", "").
-        replace("”­‘– : ", ""))
+        map(_.replace("å¤©å€™ :", "").
+        replace("ç™ºèµ° : ", ""))
       }
 
       val raceInfoStr =
@@ -228,8 +229,8 @@ object RowExtractor {
           val row =
 	     line.map(_.replaceAll("  ", "").
                         replaceAll("<diary_snap_cut></diary_snap_cut>", "").
-                        replaceAll("(–Ä|‰²|ƒZ)(\\d{1,2})", "$1,$2").
-		        replaceAll("\\[(¼|’n|“Œ|ŠO)\\]", "$1,")).
+                        replaceAll("(ç‰|ç‰¡|ã‚»)(\\d{1,2})", "$1,$2").
+		        replaceAll("\\[(è¥¿|åœ°|æ±|å¤–)\\]", "$1,")).
              map(_.filter(_ != '?').trim).
              mkString(",").split(",")
 	  val raceResult = str2raceResult(lastRowId, row)
@@ -418,7 +419,7 @@ case class RaceResult(
 object DateRe {
   
   val dateRe =
-    "(\\d\\d\\d\\d)”N(\\d\\d?)Œ(\\d\\d?)“ú".r
+    "(\\d\\d\\d\\d)å¹´(\\d\\d?)æœˆ(\\d\\d?)æ—¥".r
  
   def unapply(s: String) = {
     s match {
@@ -564,7 +565,7 @@ object FeatureGenerator {
     map{ case (race_id, horse_number) =>
       count += 1
       if (count % 1000 == 0)
-        println("ˆ—’† ... %7.3f“Š®—¹".format(100.0 * count / totalCount))
+        println("å‡¦ç†ä¸­ ... %7.3fï¼…å®Œäº†".format(100.0 * count / totalCount))
       new FeatureGenerator(race_id, horse_number)
     }
   }
@@ -666,7 +667,7 @@ limit 1
     apply()
   }
  
-  //The average of a horsefs speed rating in its last 4 races; value of zero when there is no past run
+  //The average of a horseâ€™s speed rating in its last 4 races; value of zero when there is no past run
   val avgsr4 = {
     val srs =
     sql"""
@@ -1099,12 +1100,12 @@ limit 1
     apply().
     flatten
 
-    preRemark.nonEmpty && preRemark.get == "o’x‚ê"
+    preRemark.nonEmpty && preRemark.get == "å‡ºé…ã‚Œ"
   }
 
   val lateStartPer = {
     val lateList = sql"""
-select (remark = 'o’x‚ê') as is_late
+select (remark = 'å‡ºé…ã‚Œ') as is_late
 from race_result inner join race_info on race_result.race_id = race_info.id
 where horse_id = ${horse_id}
 and race_info.date < ${date}
@@ -1145,7 +1146,7 @@ where id = ${race_id}
     single.
     apply.
     get.
-    replaceAll("\\d+‰ñ([^\\d]+)\\d+“ú–Ú", "$1")
+    replaceAll("\\d+å›([^\\d]+)\\d+æ—¥ç›®", "$1")
   }
 }
  
@@ -1314,7 +1315,7 @@ insert or replace into feature (
       val fgs = 
         FeatureGenerator.iterator()
       fgs.grouped(1000).foreach{ fgs =>
-        //1000‰ñƒCƒ“ƒT[ƒg‚·‚é“x‚ÉƒRƒ~ƒbƒg‚·‚é
+        //1000å›ã‚¤ãƒ³ã‚µãƒ¼ãƒˆã™ã‚‹åº¦ã«ã‚³ãƒŸãƒƒãƒˆã™ã‚‹
         DB.localTx{ implicit s =>
           fgs.foreach(FeatureDao.insert)
         }
@@ -1326,57 +1327,57 @@ insert or replace into feature (
  
 object Util {
  
-//weather‚Ìí—Ş
-//List(°, “Ü, ‰J, ¬‰J, á)
+//weatherã®ç¨®é¡
+//List(æ™´, æ›‡, é›¨, å°é›¨, é›ª)
  
-//surface‚Ìí—Ş
-//List(Å‰E, ƒ_‰E, áÅ, Å‰E ŠO, áÅ ƒ_[ƒg, ƒ_¶, Å¶, áÅ ŠO, Å¶ ŠO, Å’¼ü, áÅ ŠO-“à, áÅ “à-ŠO, Å‰E “à2ü)
+//surfaceã®ç¨®é¡
+//List(èŠå³, ãƒ€å³, éšœèŠ, èŠå³ å¤–, éšœèŠ ãƒ€ãƒ¼ãƒˆ, ãƒ€å·¦, èŠå·¦, éšœèŠ å¤–, èŠå·¦ å¤–, èŠç›´ç·š, éšœèŠ å¤–-å†…, éšœèŠ å†…-å¤–, èŠå³ å†…2å‘¨)
  
-//sex‚Ìí—Ş
-//List(‰², –Ä, ƒZ)
+//sexã®ç¨®é¡
+//List(ç‰¡, ç‰, ã‚»)
  
   private val weatherState =
-    Seq("°", "“Ü", "‰J", "¬‰J", "á")
+    Seq("æ™´", "æ›‡", "é›¨", "å°é›¨", "é›ª")
   
   def weather(s: String): String = {
     weatherState.map{ state =>
       if (s == state) return state
     }
-    return "‘¼"
+    return "ä»–"
   }
  
   private val surfaceState =
-    Seq("Å", "ƒ_")
+    Seq("èŠ", "ãƒ€")
  
   def surface(s: String): String = {
     surfaceState.foreach { state =>
       if (s.contains(state)) return state
     }
-    return "‘¼"
+    return "ä»–"
   }
  
   private val sexState =
-    Seq("‰²", "–Ä", "ƒZ")
+    Seq("ç‰¡", "ç‰", "ã‚»")
  
   def sex(s: String): String = {
     sexState.map{ state =>
       if (s == state) return state
     }
-    return "‘¼"
+    return "ä»–"
   }
 
   private val courseState =
-    Seq("’¼ü", "‰E","¶","ŠO")
+    Seq("ç›´ç·š", "å³","å·¦","å¤–")
 
   def course(s: String): String = {
     courseState.map{ state =>
       if (s.contains(state)) return state
     }
-    return "‘¼"
+    return "ä»–"
   }
 
   /**
-   * Date‚ğyyyy-MM-DD‚ÌŒ`®‚Ì•¶š—ñ‚É•ÏŠ·
+   * Dateã‚’yyyy-MM-DDã®å½¢å¼ã®æ–‡å­—åˆ—ã«å¤‰æ›
    */
   def date2sqliteStr(date: Date): String = {
     val cal = Calendar.getInstance()
@@ -1393,12 +1394,12 @@ object Util {
  
   val str2clsMap =
     Array(
-      "ƒI[ƒvƒ“",
-      "1600–œ‰º",
-      "1000–œ‰º",
-      "500–œ‰º",
-      "–¢Ÿ—˜",
-      "V”n").zipWithIndex
+      "ã‚ªãƒ¼ãƒ—ãƒ³",
+      "1600ä¸‡ä¸‹",
+      "1000ä¸‡ä¸‹",
+      "500ä¸‡ä¸‹",
+      "æœªå‹åˆ©",
+      "æ–°é¦¬").zipWithIndex
  
   def str2cls(s: String): Int = {
     str2clsMap.foreach{ case (a, b) =>
@@ -1408,12 +1409,12 @@ object Util {
  
   val positionState =
     Array(
-      "(~)",
-      "(Ä)",
-      "’†",
-      "æ",
-      "¸",
-      "œ"
+      "(é™)",
+      "(å†)",
+      "ä¸­",
+      "å–",
+      "å¤±",
+      "é™¤"
     ).zipWithIndex
  
   def position2cls(s: String): (Option[Int], Option[Int]) = {
@@ -1426,14 +1427,14 @@ object Util {
  
   val surfaceStates =
     Array(
-      "ƒ_[ƒg : âcd",
-      "ƒ_[ƒg : d",
-      "ƒ_[ƒg : —Ç",
-      "ƒ_[ƒg : •s—Ç",
-      "Å : —Ç",
-      "Å : âcd",
-      "Å : d",
-      "Å : •s—Ç")
+      "ãƒ€ãƒ¼ãƒˆ : ç¨é‡",
+      "ãƒ€ãƒ¼ãƒˆ : é‡",
+      "ãƒ€ãƒ¼ãƒˆ : è‰¯",
+      "ãƒ€ãƒ¼ãƒˆ : ä¸è‰¯",
+      "èŠ : è‰¯",
+      "èŠ : ç¨é‡",
+      "èŠ : é‡",
+      "èŠ : ä¸è‰¯")
   
   val startTimeFormat = new SimpleDateFormat("hh:mm")
   val finishingTimeFormat = new SimpleDateFormat("m:ss.S")
@@ -1441,15 +1442,15 @@ object Util {
   val example =
     Array[Any](
   //race_name
-  "3Îã500–œ‰º",
+  "3æ­³ä¸Š500ä¸‡ä¸‹",
   //surface
-  "Å‰E",
+  "èŠå³",
   //distance
   2600,
   //weather
-  "°",
+  "æ™´",
   //surface
-  "Å : —Ç",
+  "èŠ : è‰¯",
   //race start
   startTimeFormat.parse("16:15"),
   //race number
@@ -1457,11 +1458,11 @@ object Util {
   //surface score
   -4,
   //date
-  "2014”N9Œ7“ú",
+  "2014å¹´9æœˆ7æ—¥",
   //place_detail
-  "2‰ñ¬‘q12“ú–Ú",
+  "2å›å°å€‰12æ—¥ç›®",
   //class
-  "ƒTƒ‰Œn3ÎˆÈã500–œ‰º›¬›“Áw(’è—Ê)",
+  "ã‚µãƒ©ç³»3æ­³ä»¥ä¸Š500ä¸‡ä¸‹â—‹æ··â—‹ç‰¹æŒ‡(å®šé‡)",
   //finish position
   1,
   //frame number
@@ -1471,7 +1472,7 @@ object Util {
   //horse id
   "2011100417",
   //sex
-  "‰²",
+  "ç‰¡",
   //age
   3,
   //basis weight
@@ -1499,9 +1500,9 @@ object Util {
   //text 
   "",
   //text remark
-  "o’x‚ê",
+  "å‡ºé…ã‚Œ",
   //text stable not null
-  "¼",
+  "è¥¿",
   //text trainer_id not null
   "01071",
   //text owner_id not null
@@ -1522,7 +1523,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     args.headOption match {
       case Some("collecturl") => 
-        //‰ß‹10”N•ª‚ÌURL‚ğûW‚·‚é
+        //éå»10å¹´åˆ†ã®URLã‚’åé›†ã™ã‚‹
         RaceListScraper.scrape(period = 12 * 10)
       case Some("scrapehtml") => 
         RaceScraper.scrape()

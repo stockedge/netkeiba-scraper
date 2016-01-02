@@ -14,7 +14,7 @@ downSample <- function(df) {
 
 
 drv <- dbDriver('SQLite')
-conn <- dbConnect(drv, dbname='..\\horseracingpredictor\\race.db')
+conn <- dbConnect(drv, dbname='race.db')
 rs <- dbSendQuery(conn, 
 'select 
 order_of_finish,
@@ -64,7 +64,7 @@ allData <- fetch(rs, n = -1)
 dbClearResult(rs)
 dbDisconnect(conn)
 
-#ƒJƒeƒSƒŠ•Ï”‚ðƒtƒ@ƒNƒ^[‚É•ÏŠ·‚µ‚Ä‚¨‚­
+#ã‚«ãƒ†ã‚´ãƒªå¤‰æ•°ã‚’ãƒ•ã‚¡ã‚¯ã‚¿ãƒ¼ã«å¤‰æ›ã—ã¦ãŠã
 allData$placeCode <- factor(allData$placeCode)
 allData$month     <- factor(allData$month)
 allData$grade     <- factor(allData$grade)
@@ -73,36 +73,36 @@ allData$weather   <- factor(allData$weather)
 allData$surface   <- factor(allData$surface)
 allData$course    <- factor(allData$course)
 
-#•‰’Sd—Ê/”n‘Ìd‚ð‘f«‚É’Ç‰Á
+#è² æ‹…é‡é‡/é¦¬ä½“é‡ã‚’ç´ æ€§ã«è¿½åŠ 
 allData$weightper <- allData$weight / allData$hweight
 
-#ƒIƒbƒY‚ðŽxŽ—¦‚É•ÏŠ·
+#ã‚ªãƒƒã‚ºã‚’æ”¯æŒçŽ‡ã«å¤‰æ›
 allData$support <- 0.788 / (allData$odds - 0.1)
 allData$odds <- NULL
 
-#’…‡‚ðƒJƒeƒSƒŠ•Ï”‚É•ÏŠ·
+#ç€é †ã‚’ã‚«ãƒ†ã‚´ãƒªå¤‰æ•°ã«å¤‰æ›
 allData$order_of_finish <- factor(allData$order_of_finish == 1)
 
 allData.s <- downSample(na.omit(allData))
 allData.s <- allData.s[order(allData.s$race_id),]
 
-#ƒf[ƒ^‚ðŠwK—p‚ÆƒeƒXƒg—p‚É•ªŠ„‚·‚é
+#ãƒ‡ãƒ¼ã‚¿ã‚’å­¦ç¿’ç”¨ã¨ãƒ†ã‚¹ãƒˆç”¨ã«åˆ†å‰²ã™ã‚‹
 train <- allData.s[1:(nrow(allData.s)-5000),]
 test  <- allData.s[(nrow(allData.s)-5001):nrow(allData.s),]
 
-#—\‘ªƒ‚ƒfƒ‹‚ðì¬
+#äºˆæ¸¬ãƒ¢ãƒ‡ãƒ«ã‚’ä½œæˆ
 (rf.model1 <- randomForest(
   order_of_finish ~ . - support - race_id, train))
 
-#‘f«‚Ìd—v“x‚ðŒ©‚Ä‚Ý‚é
+#ç´ æ€§ã®é‡è¦åº¦ã‚’è¦‹ã¦ã¿ã‚‹
 importance(rf.model1)
 
-#ƒeƒXƒgƒf[ƒ^‚Å—\‘ª—Í‚ðŒ©‚Ä‚Ý‚é
+#ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã§äºˆæ¸¬åŠ›ã‚’è¦‹ã¦ã¿ã‚‹
 pred <- predict(rf.model1, test)
 tbl <- table(pred, test$order_of_finish)
 sum(diag(tbl)) / sum(tbl)
 
-#ŽxŽ—¦‚¾‚¯‚ð—p‚¢‚Ä—\‘ªƒ‚ƒfƒ‹‚ðì¬‚·‚é
+#æ”¯æŒçŽ‡ã ã‘ã‚’ç”¨ã„ã¦äºˆæ¸¬ãƒ¢ãƒ‡ãƒ«ã‚’ä½œæˆã™ã‚‹
 (rf.model2 <- randomForest(
   order_of_finish ~ support, train))
 
@@ -144,16 +144,16 @@ scaled.allData <- unsplit(
         order_of_finish = rw$order_of_finish,
         race_id = rw$race_id,
         age = rw$age,
-@@@@@@@grade = rw$grade,
-@@@@@@@distance = rw$distance,
-@@@@@@@sex = rw$sex,
-@@@@@@@weather = rw$weather,
-@@@@@@@course = rw$course,
-@@@@@@@surface = rw$surface,
-@@@@@@@surfaceScore = rw$surfaceScore,
-@@@@@@@horse_number = rw$horse_number,
-@@@@@@@placeCode = rw$placeCode,
-@@@@@@@race_number = rw$race_number,
+        grade = rw$grade,
+        distance = rw$distance,
+        sex = rw$sex,
+        weather = rw$weather,
+        course = rw$course,
+        surface = rw$surface,
+        surfaceScore = rw$surfaceScore,
+        horse_number = rw$horse_number,
+        placeCode = rw$placeCode,
+ã€€      race_number = rw$race_number,
         support = rw$support,
         scale(rw[,racewiseFeature]))
     }),
@@ -167,45 +167,45 @@ scaled.allData[is.nan.df(scaled.allData)] <- 0
 scaled.allData <- downSample(na.omit(scaled.allData))
 scaled.allData <- scaled.allData[order(scaled.allData$race_id),]
 
-#ƒf[ƒ^‚ðŠwK—p‚ÆƒeƒXƒg—p‚É•ªŠ„‚·‚é
+#ãƒ‡ãƒ¼ã‚¿ã‚’å­¦ç¿’ç”¨ã¨ãƒ†ã‚¹ãƒˆç”¨ã«åˆ†å‰²ã™ã‚‹
 scaled.train <- scaled.allData[1:(nrow(scaled.allData)-5000),]
 scaled.test  <- scaled.allData[(nrow(scaled.allData)-5001):nrow(scaled.allData),]
 
-#ƒŒ[ƒX–ˆ‚É³‹K‰»‚³‚ê‚½ƒf[ƒ^‚Å—\‘ªƒ‚ƒfƒ‹‚ðì¬
+#ãƒ¬ãƒ¼ã‚¹æ¯Žã«æ­£è¦åŒ–ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã§äºˆæ¸¬ãƒ¢ãƒ‡ãƒ«ã‚’ä½œæˆ
 (rf.model3 <- randomForest(
   order_of_finish ~ . - support - race_id, scaled.train))
 
-#‘f«‚Ìd—v“x‚ðŒ©‚Ä‚Ý‚é
+#ç´ æ€§ã®é‡è¦åº¦ã‚’è¦‹ã¦ã¿ã‚‹
 importance(rf.model3)
 
-#ƒeƒXƒgƒf[ƒ^‚Å—\‘ª—Í‚ðŒ©‚Ä‚Ý‚é
+#ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã§äºˆæ¸¬åŠ›ã‚’è¦‹ã¦ã¿ã‚‹
 pred <- predict(rf.model3, scaled.test)
 tbl <- table(pred, scaled.test$order_of_finish)
 sum(diag(tbl)) / sum(tbl)
 
 
 
-#ŽxŽ—¦‚ð’Ç‰Á‚µ‚Ä—\‘ªƒ‚ƒfƒ‹‚ðì¬
+#æ”¯æŒçŽ‡ã‚’è¿½åŠ ã—ã¦äºˆæ¸¬ãƒ¢ãƒ‡ãƒ«ã‚’ä½œæˆ
 (rf.model4 <- randomForest(
   order_of_finish ~ support, train))
 
-#‘f«‚Ìd—v“x‚ðŒ©‚Ä‚Ý‚é
+#ç´ æ€§ã®é‡è¦åº¦ã‚’è¦‹ã¦ã¿ã‚‹
 importance(rf.model4)
 
-#ƒeƒXƒgƒf[ƒ^‚Å—\‘ª—Í‚ðŒ©‚Ä‚Ý‚é
+#ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã§äºˆæ¸¬åŠ›ã‚’è¦‹ã¦ã¿ã‚‹
 pred <- predict(rf.model4, test)
 tbl <- table(pred, test$order_of_finish)
 sum(diag(tbl)) / sum(tbl)
 
 
-#ŽxŽ—¦‚ð’Ç‰Á‚µ‚Ä—\‘ªƒ‚ƒfƒ‹‚ðì¬
+#æ”¯æŒçŽ‡ã‚’è¿½åŠ ã—ã¦äºˆæ¸¬ãƒ¢ãƒ‡ãƒ«ã‚’ä½œæˆ
 (rf.model5 <- randomForest(
   order_of_finish ~ support, scaled.train))
 
-#‘f«‚Ìd—v“x‚ðŒ©‚Ä‚Ý‚é
+#ç´ æ€§ã®é‡è¦åº¦ã‚’è¦‹ã¦ã¿ã‚‹
 importance(rf.model5)
 
-#ƒeƒXƒgƒf[ƒ^‚Å—\‘ª—Í‚ðŒ©‚Ä‚Ý‚é
+#ãƒ†ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã§äºˆæ¸¬åŠ›ã‚’è¦‹ã¦ã¿ã‚‹
 pred <- predict(rf.model5, scaled.test)
 tbl <- table(pred, scaled.test$order_of_finish)
 sum(diag(tbl)) / sum(tbl)
