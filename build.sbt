@@ -1,5 +1,3 @@
-scalacOptions := List("-encoding", "SJIS")
-
 libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.7.2"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.3"
