@@ -15,47 +15,54 @@ downSample <- function(df) {
 
 drv <- dbDriver('SQLite')
 conn <- dbConnect(drv, dbname='race.db')
-rs <- dbSendQuery(conn, 
-'select 
-order_of_finish,
-race_id,
-horse_number,
-grade,
-age,
-avgsr4,
-avgWin4,
-dhweight,
-disRoc,
-r.distance,
-dsl,
-enterTimes,
-eps,
-hweight,
-jwinper,
-odds,
-owinper,
-preSRa,
-sex,
-f.surface,
-surfaceScore,
-twinper,
-f.weather,
-weight,
-winRun,
-jEps,
-jAvgWin4,
-preOOF,
-pre2OOF,
-month,
-runningStyle,
-preLastPhase,
-lateStartPer,
-course,
-placeCode,
-race_number
-from feature f inner join race_info r on f.race_id = r.id
-where order_of_finish is not null
-and preSRa is not null
+rs <- dbSendQuery(conn, '
+select 
+  order_of_finish,
+  race_id,
+  horse_number,
+  grade,
+  age,
+  avgsr4,
+  avgWin4,
+  dhweight,
+  disRoc,
+  r.distance,
+  dsl,
+  enterTimes,
+  eps,
+  hweight,
+  jwinper,
+  odds,
+  owinper,
+  preSRa,
+  sex,
+  f.surface,
+  surfaceScore,
+  twinper,
+  f.weather,
+  weight,
+  winRun,
+  jEps,
+  jAvgWin4,
+  preOOF,
+  pre2OOF,
+  month,
+  runningStyle,
+  preLastPhase,
+  lateStartPer,
+  course,
+  placeCode,
+  race_number
+from 
+  feature f 
+inner join 
+  race_info r 
+on 
+  f.race_id = r.id
+where
+  order_of_finish is not null
+and 
+  preSRa is not null
 limit 250000')
  
 allData <- fetch(rs, n = -1)
