@@ -751,11 +751,6 @@ limit 100
     }
   }
  
-  //Post-position in current race
-  val draw = {
-    horse_number
-  }
- 
   //Total prize money earnings (finishing first, second or third) to date/Number of races entered
   val eps = {
     val earning_money =
@@ -1172,7 +1167,6 @@ create table if not exists feature (
   disavesr real,
   disRoc real,
   distance real,
-  draw real,
   dsl real,
   enterTimes real,
   eps real,
@@ -1228,7 +1222,6 @@ insert or replace into feature (
   disavesr,
   disRoc,
   distance,
-  draw,
   dsl,
   enterTimes,
   eps,
@@ -1276,7 +1269,6 @@ insert or replace into feature (
   ${fg.disavesr},
   ${fg.disRoc},
   ${fg.distance},
-  ${fg.draw},
   ${fg.dsl},
   ${fg.enterTimes},
   ${fg.eps},
