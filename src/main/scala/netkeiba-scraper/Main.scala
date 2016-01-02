@@ -570,13 +570,6 @@ insert or replace into race_result (
 """.update.apply()
   }
   
-  def allHorseId()(implicit s: DBSession) = {
-    sql"""
-select distinct horse_id
-from race_result
-""".map(_.string("horse_id")).list.apply()
-  }
-
 }
  
 object FeatureGenerator {
