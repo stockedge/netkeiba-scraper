@@ -324,13 +324,20 @@ create table if not exists race_info (
   date          text    not null,
   place_detail  text    not null,
   race_class    text    not null
-);
+);""".execute.apply
 
-create index date_idx on
-race_info (date);
+    sql"""
+create index 
+  date_idx
+on
+  race_info (date);
+""".execute.apply
 
-create index id_date_idx on
-race_info (id, date);
+    sql"""
+create index 
+  id_date_idx 
+on
+  race_info (id, date);
 """.execute.apply
   }
 
@@ -464,22 +471,48 @@ create table if not exists race_result (
   earning_money      real,
   primary key (race_id, horse_number),
   foreign key (race_id) references race_info (id)
-);
+);""".execute.apply
 
-create unique index race_id_horse_number_idx on 
-race_result (race_id, horse_number);
+    sql"""
+create unique index 
+  race_id_horse_number_idx 
+on 
+  race_result (race_id, horse_number);
+""".execute.apply
 
-create index race_id_idx on
-race_result (race_id);
+    sql"""
+create index 
+  race_id_idx 
+on
+  race_result (race_id);
+""".execute.apply
 
-create index race_id_horse_id_idx on
-race_result (race_id, horse_id);
-create index race_id_jockey_id_idx on
-race_result (race_id, jockey_id);
-create index race_id_trainer_id_idx on
-race_result (race_id, trainer_id);
-create index race_id_owner_id_idx on
-race_result (race_id, owner_id);
+    sql"""
+create index 
+  race_id_horse_id_idx 
+on
+  race_result (race_id, horse_id);
+""".execute.apply
+
+    sql"""
+create index 
+  race_id_jockey_id_idx 
+on
+  race_result (race_id, jockey_id);
+""".execute.apply
+
+    sql"""
+create index 
+  race_id_trainer_id_idx 
+on
+  race_result (race_id, trainer_id);
+""".execute.apply
+
+    sql"""
+create index 
+  race_id_owner_id_idx 
+on
+  race_result (race_id, owner_id);
 """.execute.apply
   }
     
