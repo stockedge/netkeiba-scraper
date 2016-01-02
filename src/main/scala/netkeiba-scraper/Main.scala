@@ -20,8 +20,8 @@ import scalikejdbc._, SQLInterpolation._
  
 object RaceScraper {
  
-  val mail = ""
-  val password = ""
+  val mail = "enter your email address"
+  val password = "enter your password"
   
   def scrape() = {
     
