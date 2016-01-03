@@ -138,7 +138,8 @@ c("avgsr4",
 "runningStyle",
 "preLastPhase",
 "lateStartPer",
-"weightper")
+"weightper",
+"winRun")
 
 splited.allData <- split(allData, allData$race_id)
 
