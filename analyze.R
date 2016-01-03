@@ -159,7 +159,7 @@ scaled.allData <- unsplit(
         surfaceScore = rw$surfaceScore,
         horse_number = rw$horse_number,
         placeCode = rw$placeCode,
-　      race_number = rw$race_number,
+        race_number = rw$race_number,
         support = rw$support,
         scale(rw[,racewiseFeature]))
     }),
