@@ -121,7 +121,6 @@ racewiseFeature <-
 c("avgsr4",
 "avgWin4",
 "dhweight",
-"disavesr",
 "disRoc",
 "dsl",
 "enterTimes",
@@ -139,7 +138,8 @@ c("avgsr4",
 "runningStyle",
 "preLastPhase",
 "lateStartPer",
-"weightper")
+"weightper",
+"winRun")
 
 splited.allData <- split(allData, allData$race_id)
 
