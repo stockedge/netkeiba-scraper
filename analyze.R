@@ -121,7 +121,6 @@ racewiseFeature <-
 c("avgsr4",
 "avgWin4",
 "dhweight",
-"disavesr",
 "disRoc",
 "dsl",
 "enterTimes",
