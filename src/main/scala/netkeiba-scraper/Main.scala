@@ -474,13 +474,6 @@ create table if not exists race_result (
 );""".execute.apply
 
     sql"""
-create unique index 
-  race_id_horse_number_idx 
-on 
-  race_result (race_id, horse_number);
-""".execute.apply
-
-    sql"""
 create index 
   race_id_idx 
 on

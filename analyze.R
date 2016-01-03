@@ -154,6 +154,7 @@ scaled.allData <- unsplit(
         sex = rw$sex,
         weather = rw$weather,
         course = rw$course,
+        month = rw$month,
         surface = rw$surface,
         surfaceScore = rw$surfaceScore,
         horse_number = rw$horse_number,
