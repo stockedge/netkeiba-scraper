@@ -1193,7 +1193,7 @@ limit 100
     else None
   }
 
-  val toBeStrongJockey = {
+  val ridingStrongJockey = {
     val preJockeyIdOpt = sql"""
 select 
   jockey_id
@@ -1478,7 +1478,7 @@ create table if not exists feature (
   pre2OOF real,
 
   month real,
-  toBeStrongJockey real,
+  ridingStrongJockey real,
   runningStyle real,
   preLateStart real,
   preLastPhase real,
@@ -1533,7 +1533,7 @@ insert or replace into feature (
   pre2OOF,
 
   month,
-  toBeStrongJockey,
+  ridingStrongJockey,
   runningStyle,
   preLateStart,
   preLastPhase,
@@ -1579,7 +1579,7 @@ insert or replace into feature (
 
   ${fg.pre2OOF},
   ${fg.month},
-  ${fg.toBeStrongJockey},
+  ${fg.ridingStrongJockey},
   ${fg.runningStyle},
   ${fg.preLateStart},
   ${fg.preLastPhase},
