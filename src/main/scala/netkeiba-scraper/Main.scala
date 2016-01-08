@@ -1384,6 +1384,21 @@ where
     get.
     replaceAll("\\d+回([^\\d]+)\\d+日目", "$1")
   }
+
+  val headCount = {
+    sql"""
+select
+  count(*) as head_count
+from
+  race_result
+where
+  race_id = ${race_id}
+""".map(_.double("head_count")).
+    single.
+    apply.
+    get
+  }
+
 }
  
 object FeatureDao {
