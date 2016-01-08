@@ -1486,6 +1486,9 @@ create table if not exists feature (
   course text, 
   placeCode text,
 
+  headCount real,
+  preHeadCount real,
+
   primary key (race_id, horse_number)
 );
 """.execute.apply
@@ -1539,7 +1542,10 @@ insert or replace into feature (
   preLastPhase,
   lateStartPer,
   course,
-  placeCode
+  placeCode,
+  
+  headCount,
+  preHeadCount
 
 ) values (
   ${fg.race_id},
@@ -1586,7 +1592,11 @@ insert or replace into feature (
   ${fg.lateStartPer},
   ${fg.course}, 
 
-  ${fg.placeCode}
+  ${fg.placeCode},
+  
+  ${fg.headCount},
+  ${fg.preHeadCount}
+  
 )
 """.update.apply
   }
