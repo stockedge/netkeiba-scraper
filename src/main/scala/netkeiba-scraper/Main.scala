@@ -1384,6 +1384,54 @@ where
     get.
     replaceAll("\\d+回([^\\d]+)\\d+日目", "$1")
   }
+
+  val headCount = {
+    sql"""
+select
+  count(*) as head_count
+from
+  race_result
+where
+  race_id = ${race_id}
+""".map(_.double("head_count")).
+    single.
+    apply.
+    get
+  }
+
+  val preHeadCount = {
+    for { pre_race_id <- sql"""
+select 
+  race_id
+from 
+  race_result 
+inner join
+  race_info 
+on
+  race_result.race_id = race_info.id
+where 
+  horse_id = ${horse_id}
+and 
+  race_info.date < ${date}
+order by date desc
+limit 1
+""".map(_.int("race_id")).
+    single.
+    apply() } yield {
+      sql"""
+select
+  count(*) as head_count
+from
+  race_result
+where
+  race_id = ${pre_race_id}
+""".map(_.double("head_count")).
+      single.
+      apply.
+      get
+    }
+  }
+  
 }
  
 object FeatureDao {
