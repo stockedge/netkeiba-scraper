@@ -1444,7 +1444,7 @@ where
   val gradeChanged = {
     for { pre_race_id <- preRaceIdOpt } yield {
       val info = RaceInfoDao.getById(pre_race_id)
-      grade != Util.str2cls(info.race_name)
+      grade != Util.str2cls(info.race_class)
     }
   }
 }
