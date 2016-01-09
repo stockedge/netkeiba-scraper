@@ -1398,9 +1398,8 @@ where
     apply.
     get
   }
-
-  val preHeadCount = {
-    for { pre_race_id <- sql"""
+  
+  private val preRaceIdOpt = sql"""
 select 
   race_id
 from 
@@ -1417,7 +1416,10 @@ order by date desc
 limit 1
 """.map(_.int("race_id")).
     single.
-    apply() } yield {
+    apply()
+
+  val preHeadCount = {
+    for { pre_race_id <- preRaceIdOpt } yield {
       sql"""
 select
   count(*) as head_count
@@ -1429,6 +1431,13 @@ where
       single.
       apply.
       get
+    }
+  }
+  
+  val surfaceChanged = {
+    for { pre_race_id <- preRaceIdOpt } yield {
+      val info = RaceInfoDao.getById(pre_race_id)
+      surface != Util.surface(info.surface)
     }
   }
   
