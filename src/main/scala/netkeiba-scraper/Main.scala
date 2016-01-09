@@ -1497,6 +1497,8 @@ create table if not exists feature (
 
   headCount real,
   preHeadCount real,
+  
+  surfaceChanged real,
 
   primary key (race_id, horse_number)
 );
@@ -1554,7 +1556,9 @@ insert or replace into feature (
   placeCode,
   
   headCount,
-  preHeadCount
+  preHeadCount,
+  
+  surfaceChanged
 
 ) values (
   ${fg.race_id},
@@ -1604,7 +1608,9 @@ insert or replace into feature (
   ${fg.placeCode},
   
   ${fg.headCount},
-  ${fg.preHeadCount}
+  ${fg.preHeadCount},
+
+  ${fg.surfaceChanged}
   
 )
 """.update.apply
