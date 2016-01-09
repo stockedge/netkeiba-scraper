@@ -94,7 +94,7 @@ allData.s <- allData.s[order(allData.s$race_id),]
 
 #データを学習用とテスト用に分割する
 train <- allData.s[1:(nrow(allData.s)-5000),]
-test  <- allData.s[(nrow(allData.s)-5001):nrow(allData.s),]
+test  <- allData.s[(nrow(allData.s)-4999):nrow(allData.s),]
 
 #予測モデルを作成
 (rf.model1 <- randomForest(
@@ -176,7 +176,7 @@ scaled.allData <- scaled.allData[order(scaled.allData$race_id),]
 
 #データを学習用とテスト用に分割する
 scaled.train <- scaled.allData[1:(nrow(scaled.allData)-5000),]
-scaled.test  <- scaled.allData[(nrow(scaled.allData)-5001):nrow(scaled.allData),]
+scaled.test  <- scaled.allData[(nrow(scaled.allData)-4999):nrow(scaled.allData),]
 
 #レース毎に正規化されたデータで予測モデルを作成
 (rf.model3 <- randomForest(
