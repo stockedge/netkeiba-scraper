@@ -1441,6 +1441,12 @@ where
     }
   }
   
+  val gradeChanged = {
+    for { pre_race_id <- preRaceIdOpt } yield {
+      val info = RaceInfoDao.getById(pre_race_id)
+      grade != Util.str2cls(info.race_name)
+    }
+  }
 }
  
 object FeatureDao {
@@ -1497,6 +1503,9 @@ create table if not exists feature (
 
   headCount real,
   preHeadCount real,
+  
+  surfaceChanged real,
+  gradeChanged real,
 
   primary key (race_id, horse_number)
 );
@@ -1554,7 +1563,10 @@ insert or replace into feature (
   placeCode,
   
   headCount,
-  preHeadCount
+  preHeadCount,
+  
+  surfaceChanged,
+  gradeChanged
 
 ) values (
   ${fg.race_id},
@@ -1604,7 +1616,10 @@ insert or replace into feature (
   ${fg.placeCode},
   
   ${fg.headCount},
-  ${fg.preHeadCount}
+  ${fg.preHeadCount},
+
+  ${fg.surfaceChanged},
+  ${fg.gradeChanged}
   
 )
 """.update.apply
