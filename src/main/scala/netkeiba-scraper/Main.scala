@@ -104,6 +104,14 @@ object RowExtractor {
 	 Try(race_result(22).toDouble).toOption
        )
   }
+
+  private def parseHtml(html: String) = {
+    val hp = new HtmlParser
+    val saxer = new NoBindingFactoryAdapter
+    hp.setContentHandler(saxer)
+    hp.parse(new InputSource(new StringReader(html)))
+    saxer.rootElem
+  }
 	
   def extract()(implicit s: DBSession) = {
  
@@ -139,11 +147,6 @@ object RowExtractor {
  
     while (i < usefulFiles.size) {
       
-      val hp = new HtmlParser
-  
-      val saxer = new NoBindingFactoryAdapter
-      hp.setContentHandler(saxer)
- 
       val file = usefulFiles(i)
       i += 1
 
@@ -156,11 +159,15 @@ object RowExtractor {
       }
  
       val rdHtml = rdLines.mkString + "</dl>"
+
+      val (condition, name) = {
+	val elem = parseHtml(rdHtml)
       
-      hp.parse(new InputSource(new StringReader(rdHtml)))
+	val condition = elem.\\("span").text
+	val name = elem.\\("h1").text
+	(condition, name)
+      }
       
-      val condition = saxer.rootElem.\\("span").text
-      val name = saxer.rootElem.\\("h1").text
       val round = file.getName.replace(".html", "").takeRight(2)
       
       def extractDateInfo(lines: Seq[String]) = {
@@ -180,10 +187,8 @@ object RowExtractor {
         }
  
 	val rt2Html = rt2Lines.mkString + "</table>"
- 
-	hp.parse(new InputSource(new StringReader(rt2Html)))
 
-	val text = saxer.rootElem.\\("td").head.text
+	val text = parseHtml(rt2Html).\\("td").head.text
         text.filter(_ != '?').replaceAll("\\(\\s*\\)", "").trim.toInt.toString
       }.getOrElse("")
  
@@ -195,8 +200,6 @@ object RowExtractor {
  
       val rt1Html = rt1Lines.mkString.drop(17) + "</table>"
  
-      hp.parse(new InputSource(new StringReader(rt1Html)))
-
       val conditions = {
         condition.
         split("/").
@@ -220,9 +223,35 @@ object RowExtractor {
       RaceInfoDao.insert(raceInfo)
 
       val lastRowId = RaceInfoDao.lastRowId()
- 
+      
+      val payoffLines = {
+	lines.
+	dropWhile(!_.contains("<dl class=\"pay_block\">")).
+	takeWhile(!_.contains("</dl>"))
+      }
+      val payoffHtml =
+	payoffLines.mkString + "</dl>"
+      val payoffs = {
+	parseHtml(payoffHtml).\\("tr").map{ tr => 
+          val ticketType = tr.\\("th").text.trim
+          tr.\\("td").map(_.toString.replaceAll("</?td[^>]*>","").split("<br/>").map(_.trim.replaceAll(",",""))).transpose.
+          map((ticketType, _))
+        }.flatten.
+        map { case (ticketStr, list) =>
+          Payoff(
+            race_id = lastRowId,
+            ticket_type = Util.str2ticketType(ticketStr),
+            horse_number = list(0),
+            payoff = list(1).toDouble,
+            popularity = list(2).toInt
+          )
+        }
+      }
+
+      payoffs.foreach(PayoffDao.insert)
+
       Try{
-	saxer.rootElem.\\("tr").tail 
+	parseHtml(rt1Html).\\("tr").tail 
       }.foreach{ xs =>
 	xs.map(_.\\("td").map(_.child.mkString).map(clean)).
 	foreach{ line =>
@@ -602,7 +631,7 @@ insert or replace into payoff (
   ${dto.ticket_type},
   ${dto.horse_number},
   ${dto.payoff},
-  ${dto.popularity},
+  ${dto.popularity}
 )
 """.update.apply()
   }
@@ -1950,6 +1979,7 @@ object Main {
         DB.localTx { implicit s =>
           RaceInfoDao.createTable()
           RaceResultDao.createTable()
+	  PayoffDao.createTable()
           RowExtractor.extract()
         }
       case Some("genfeature") =>
