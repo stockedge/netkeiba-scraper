@@ -1464,11 +1464,15 @@ and
   race_info.date < ${date}
 order by date desc
 limit 1
-""".map(_.doubleOpt("length")).
+""".map(_.stringOpt("length")).
     single.
     apply().
     flatten.
     map(Util.margin)
+  }
+
+  val femaleOnly = {
+    race_class.contains("牝")
   }
 }
  
@@ -1531,6 +1535,7 @@ create table if not exists feature (
   gradeChanged real,
 
   preMargin real,
+  femaleOnly real,
 
   primary key (race_id, horse_number)
 );
@@ -1592,8 +1597,8 @@ insert or replace into feature (
   
   surfaceChanged,
   gradeChanged,
-
-  preMargin
+  preMargin,
+  femaleOnly
 
 ) values (
   ${fg.race_id},
@@ -1647,8 +1652,8 @@ insert or replace into feature (
 
   ${fg.surfaceChanged},
   ${fg.gradeChanged},
-
-  ${fg.preMargin}
+  ${fg.preMargin},
+  ${fg.femaleOnly}
   
 )
 """.update.apply
