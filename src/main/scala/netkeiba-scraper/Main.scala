@@ -1735,6 +1735,21 @@ object Util {
     return "他"
   }
 
+  private val ticketStr =
+    Seq(
+      "単勝",
+      "複勝",
+      "枠連",
+      "馬連",
+      "ワイド",
+      "馬単",
+      "三連複",
+      "三連単"
+    ).zipWithIndex.toMap
+
+  def str2ticketType(s: String): Int =
+    ticketStr(s)
+
   /**
    * Dateをyyyy-MM-DDの形式の文字列に変換
    */
