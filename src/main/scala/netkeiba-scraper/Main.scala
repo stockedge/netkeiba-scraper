@@ -1447,6 +1447,29 @@ where
       grade != Util.str2cls(info.race_class)
     }
   }
+
+  val preMargin = {
+    sql"""
+select 
+  length
+from 
+  race_result 
+inner join 
+  race_info
+on 
+  race_result.race_id = race_info.id
+where
+  horse_id = ${horse_id}
+and
+  race_info.date < ${date}
+order by date desc
+limit 1
+""".map(_.doubleOpt("length")).
+    single.
+    apply().
+    flatten.
+    map(Util.margin)
+  }
 }
  
 object FeatureDao {
@@ -1507,6 +1530,8 @@ create table if not exists feature (
   surfaceChanged real,
   gradeChanged real,
 
+  preMargin real,
+
   primary key (race_id, horse_number)
 );
 """.execute.apply
@@ -1566,7 +1591,9 @@ insert or replace into feature (
   preHeadCount,
   
   surfaceChanged,
-  gradeChanged
+  gradeChanged,
+
+  preMargin
 
 ) values (
   ${fg.race_id},
@@ -1619,7 +1646,9 @@ insert or replace into feature (
   ${fg.preHeadCount},
 
   ${fg.surfaceChanged},
-  ${fg.gradeChanged}
+  ${fg.gradeChanged},
+
+  ${fg.preMargin}
   
 )
 """.update.apply
@@ -1686,6 +1715,16 @@ object Util {
 
   def course(s: String): String = {
     courseState.map{ state =>
+      if (s.contains(state)) return state
+    }
+    return "他"
+  }
+
+  private val marginState =
+    Seq("ハナ", "クビ", "アタマ")
+
+  def margin(s: String): String = {
+    marginState.map{ state =>
       if (s.contains(state)) return state
     }
     return "他"
