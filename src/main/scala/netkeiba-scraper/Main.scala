@@ -215,7 +215,7 @@ object RowExtractor {
         Array(round.split(" ").head, fieldScore) ++ 
         { val di = dateInfo.split(" ")
           di.take(2) :+ di.drop(2).mkString(" ") }).
-        map(_.filter(_ != '?').trim).
+        map(_.filter(_ != '?').replaceAll("(^\\h*)|(\\h*$)","")).
         mkString(",").split(",")
 
       val raceInfo = str2raceInfo(raceInfoStr)
