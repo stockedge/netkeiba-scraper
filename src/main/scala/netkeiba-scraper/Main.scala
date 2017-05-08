@@ -50,11 +50,11 @@ object RaceScraper {
       println(""+i+":downloading "+url)
       val file = new File(folder, num + ".html")
       if (!file.exists()) {
-	driver.get(url)
-	//↓ここあんまり短くしないでね！
-	Thread.sleep(5000)
-	val html = driver.getPageSource()
-	FileUtils.writeStringToFile(file, html)
+        driver.get(url)
+        //↓ここあんまり短くしないでね！
+        Thread.sleep(5000)
+        val html = driver.getPageSource()
+        FileUtils.writeStringToFile(file, html)
       }
     }
   }
@@ -66,42 +66,42 @@ object RowExtractor {
   def str2raceInfo(race_info: Array[String]): RaceInfo = {
     val DateRe(d) = race_info(8)
     RaceInfo(race_info(0), 
-	 race_info(1), 
-	 race_info(2).toInt, 
-	 race_info(3), 
-	 race_info(4), 
-	 race_info(5), 
-	 race_info(6).toInt, 
-	 Try(race_info(7).toInt).toOption, 
-	 Util.date2sqliteStr(d), 
-	 race_info(9), 
-	 race_info(10))
+         race_info(1), 
+         race_info(2).toInt, 
+         race_info(3), 
+         race_info(4), 
+         race_info(5), 
+         race_info(6).toInt, 
+         Try(race_info(7).toInt).toOption, 
+         Util.date2sqliteStr(d), 
+         race_info(9), 
+         race_info(10))
   }
  
   def str2raceResult(race_id: Int, race_result: Array[String]): RaceResult = { 
     RaceResult(race_id,
-	 race_result(0),
-	 race_result(1).toInt,
-	 race_result(2).toInt,
-	 race_result(3).split("horse/")(1).takeWhile(_ != '/'),
-	 race_result(4),
-	 race_result(5).toInt,
-	 race_result(6).toDouble,
-	 race_result(7).split("jockey/")(1).takeWhile(_ != '/'),
-	 race_result(8),
-	 race_result(9),
-	 Try(race_result(10).toInt).toOption,
-	 race_result(11),
-	 Try(race_result(12).toDouble).toOption,
-	 Try(race_result(13).toDouble).toOption,
-	 Try(race_result(14).toInt).toOption,
-	 race_result(15),
-	 { val remark = race_result(18)
+         race_result(0),
+         race_result(1).toInt,
+         race_result(2).toInt,
+         race_result(3).split("horse/")(1).takeWhile(_ != '/'),
+         race_result(4),
+         race_result(5).toInt,
+         race_result(6).toDouble,
+         race_result(7).split("jockey/")(1).takeWhile(_ != '/'),
+         race_result(8),
+         race_result(9),
+         Try(race_result(10).toInt).toOption,
+         race_result(11),
+         Try(race_result(12).toDouble).toOption,
+         Try(race_result(13).toDouble).toOption,
+         Try(race_result(14).toInt).toOption,
+         race_result(15),
+         { val remark = race_result(18)
            if (remark.isEmpty) None else Some(remark) },
-	 race_result(19),
-	 race_result(20).split("trainer/")(1).takeWhile(_ != '/'),
-	 race_result(21).split("owner/")(1).takeWhile(_ != '/'),
-	 Try(race_result(22).toDouble).toOption
+         race_result(19),
+         race_result(20).split("trainer/")(1).takeWhile(_ != '/'),
+         race_result(21).split("owner/")(1).takeWhile(_ != '/'),
+         Try(race_result(22).toDouble).toOption
        )
   }
 
@@ -112,7 +112,7 @@ object RowExtractor {
     hp.parse(new InputSource(new StringReader(html)))
     saxer.rootElem
   }
-	
+        
   def extract()(implicit s: DBSession) = {
  
     val files = new File("html").listFiles().reverse
@@ -153,25 +153,25 @@ object RowExtractor {
       val lines = io.Source.fromFile(file).getLines.toList
  
       val rdLines = {
-	lines.
-	dropWhile(!_.contains("<dl class=\"racedata fc\">")).
-	takeWhile(!_.contains("</dl>"))
+        lines.
+        dropWhile(!_.contains("<dl class=\"racedata fc\">")).
+        takeWhile(!_.contains("</dl>"))
       }
  
       val rdHtml = rdLines.mkString + "</dl>"
 
       val (condition, name) = {
-	val elem = parseHtml(rdHtml)
+        val elem = parseHtml(rdHtml)
       
-	val condition = elem.\\("span").text
-	val name = elem.\\("h1").text
-	(condition, name)
+        val condition = elem.\\("span").text
+        val name = elem.\\("h1").text
+        (condition, name)
       }
       
       val round = file.getName.replace(".html", "").takeRight(2)
       
       def extractDateInfo(lines: Seq[String]) = {
-	lines.
+        lines.
         toList.
         dropWhile(!_.contains("<p class=\"smalltxt\">")).
         tail.head.replaceAll("<[^>]+>","")
@@ -180,22 +180,22 @@ object RowExtractor {
       val dateInfo = extractDateInfo(lines).trim
 
       val fieldScore = Try{
-	val rt2Lines = {
+        val rt2Lines = {
           lines.
           dropWhile(!_.contains("class=\"result_table_02\"")).
           takeWhile(!_.contains("</table>"))
         }
  
-	val rt2Html = rt2Lines.mkString + "</table>"
+        val rt2Html = rt2Lines.mkString + "</table>"
 
-	val text = parseHtml(rt2Html).\\("td").head.text
+        val text = parseHtml(rt2Html).\\("td").head.text
         text.filter(_ != '?').replaceAll("\\(\\s*\\)", "").trim.toInt.toString
       }.getOrElse("")
  
       val rt1Lines = {
-	lines.
-	dropWhile(s => !s.contains("race_table_01")).
-	takeWhile(s => !s.contains("/table"))
+        lines.
+        dropWhile(s => !s.contains("race_table_01")).
+        takeWhile(s => !s.contains("/table"))
       }
  
       val rt1Html = rt1Lines.mkString.drop(17) + "</table>"
@@ -225,14 +225,14 @@ object RowExtractor {
       val lastRowId = RaceInfoDao.lastRowId()
       
       val payoffLines = {
-	lines.
-	dropWhile(!_.contains("<dl class=\"pay_block\">")).
-	takeWhile(!_.contains("</dl>"))
+        lines.
+        dropWhile(!_.contains("<dl class=\"pay_block\">")).
+        takeWhile(!_.contains("</dl>"))
       }
       val payoffHtml =
-	payoffLines.mkString + "</dl>"
+        payoffLines.mkString + "</dl>"
       val payoffs = {
-	parseHtml(payoffHtml).\\("tr").map{ tr => 
+        parseHtml(payoffHtml).\\("tr").map{ tr => 
           val ticketType = tr.\\("th").text.trim
           tr.\\("td").map(_.toString.replaceAll("</?td[^>]*>","").split("<br/>").map(_.trim.replaceAll(",",""))).transpose.
           map((ticketType, _))
@@ -251,19 +251,19 @@ object RowExtractor {
       payoffs.foreach(PayoffDao.insert)
 
       Try{
-	parseHtml(rt1Html).\\("tr").tail 
+        parseHtml(rt1Html).\\("tr").tail 
       }.foreach{ xs =>
-	xs.map(_.\\("td").map(_.child.mkString).map(clean)).
-	foreach{ line =>
+        xs.map(_.\\("td").map(_.child.mkString).map(clean)).
+        foreach{ line =>
           val row =
-	     line.map(_.replaceAll("  ", "").
+             line.map(_.replaceAll("  ", "").
                         replaceAll("<diary_snap_cut></diary_snap_cut>", "").
                         replaceAll("(牝|牡|セ)(\\d{1,2})", "$1,$2").
-		        replaceAll("\\[(西|地|東|外)\\]", "$1,")).
+                        replaceAll("\\[(西|地|東|外)\\]", "$1,")).
              map(_.filter(_ != '?').trim).
              mkString(",").split(",")
-	  val raceResult = str2raceResult(lastRowId, row)
-	  RaceResultDao.insert(raceResult)
+          val raceResult = str2raceResult(lastRowId, row)
+          RaceResultDao.insert(raceResult)
         }
       }
     }
@@ -300,15 +300,15 @@ object RaceListScraper {
     while (i < period) {
       Thread.sleep(1000)
       val raceListPages =
-	extractRaceList(baseUrl)
+        extractRaceList(baseUrl)
       val racePages =
-	raceListPages.map{url =>
+        raceListPages.map{url =>
           Thread.sleep(1000)
           extractRace(url)
         }.flatten
       
       racePages.foreach{ url =>
-	FileUtils.writeStringToFile(new File("race_url.txt"), url + "\n", true)
+        FileUtils.writeStringToFile(new File("race_url.txt"), url + "\n", true)
       }
  
       baseUrl = extractPrevMonth(baseUrl)
@@ -460,9 +460,9 @@ object DateRe {
   def unapply(s: String) = {
     s match {
       case dateRe(y, m, d) =>
-	val cal = Calendar.getInstance
+        val cal = Calendar.getInstance
         cal.set(y.toInt, m.toInt - 1, d.toInt)
-	Some(new Date(cal.getTimeInMillis))
+        Some(new Date(cal.getTimeInMillis))
       case _ =>
         None
     }
@@ -1979,7 +1979,7 @@ object Main {
         DB.localTx { implicit s =>
           RaceInfoDao.createTable()
           RaceResultDao.createTable()
-	  PayoffDao.createTable()
+          PayoffDao.createTable()
           RowExtractor.extract()
         }
       case Some("genfeature") =>
