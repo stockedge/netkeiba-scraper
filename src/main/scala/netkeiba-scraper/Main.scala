@@ -643,7 +643,7 @@ object FeatureGenerator {
   def iterator()(implicit s: DBSession): Iterator[FeatureGenerator] = {
     
     val race_infos = {
-      sql"select race_id, horse_number from race_result".
+      sql"select race_id, horse_number from race_result where not exists ( select * from feature where race_result.race_id = feature.race_id and race_result.horse_number = feature.horse_number)".
       map(rs => (rs.int("race_id"), rs.int("horse_number"))).
       list.
       apply
