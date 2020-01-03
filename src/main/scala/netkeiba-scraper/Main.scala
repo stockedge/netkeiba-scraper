@@ -1850,8 +1850,17 @@ object Util {
  
   def str2cls(s: String): Int = {
     str2clsMap.foreach{ case (a, b) =>
-      if (s.contains(a)) return b }
-    sys.error("class not found:"+s)
+      if (failcls2safe(s).contains(a)) return b }
+    sys.error("class not found:"+failcls2safe(s))
+  }
+
+  def failcls2safe(s: String): String = {
+    s match {
+      case s if s.contains("3歳以上1勝クラス") => s + "500万下"
+      case s if s.contains("2歳1勝クラス") => s + "500万下"
+      case s if s.contains("3歳以上2勝クラス") => s + "1000万下"
+      case _ => s
+    }
   }
  
   val positionState =
